@@ -36,30 +36,35 @@ const initialContacts: Contact[] = [
   },
 ];
 
-function App() {
+function useContactStore(): ContactStore {
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
-  const contactStore: ContactStore = {
-    contacts: contacts,
+
+  return {
+    contacts,
     getContact(id: number) {
-      return contacts.find((c) => c.id == id);
+      return contacts.find((c) => c.id === id);
     },
     addContact(contact: Contact) {
-      setContacts([...contacts, contact]);
+      setContacts((prev) => [...prev, contact]);
     },
     updateContact(contact: Contact) {
-      setContacts(contacts.map((c) => (c.id === contact.id ? contact : c)));
+      setContacts((prev) =>
+        prev.map((c) => (c.id === contact.id ? contact : c)),
+      );
     },
     deleteContact(id: number) {
-      setContacts(contacts.filter((c) => c.id !== id));
+      setContacts((prev) => prev.filter((c) => c.id !== id));
     },
     toggleFavorite(id: number) {
-      setContacts(
-        contacts.map((c) =>
-          c.id === id ? { ...c, favorite: !c.favorite } : c,
-        ),
+      setContacts((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, favorite: !c.favorite } : c)),
       );
     },
   };
+}
+
+function App() {
+  const contactStore: ContactStore = useContactStore();
   const navigate = useNavigate();
 
   const sidebarProps = {
@@ -75,10 +80,7 @@ function App() {
   const showContactProps = {
     store: contactStore,
     handleToggleFavorite: (selectedContact: Contact) => {
-      const updatedContacts = contacts.map((c) =>
-        c.id === selectedContact.id ? { ...c, favorite: !c.favorite } : c,
-      );
-      setContacts(updatedContacts);
+      contactStore.toggleFavorite(selectedContact.id);
     },
     handleEdit: (contactToEdit: Contact) => {
       navigate(`/contacts/${contactToEdit.id}/edit`);
