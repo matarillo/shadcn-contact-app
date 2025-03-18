@@ -36,13 +36,8 @@ function ShowContact({
     const deleteDialogProps = {
       contactToDelete: selectedContact,
       isOpen: isDialogOpen,
-      handleCancel: () => {
-        setIsDialogOpen(false);
-      },
-      handleDelete: () => {
-        setIsDialogOpen(false);
-        handleDelete(selectedContact);
-      },
+      setIsOpen: setIsDialogOpen,
+      handleDelete: () => handleDelete(selectedContact),
     };
 
     return (

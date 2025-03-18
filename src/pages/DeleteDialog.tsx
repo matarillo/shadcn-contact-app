@@ -5,6 +5,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Contact } from "@/types.ts";
@@ -12,24 +13,18 @@ import { Contact } from "@/types.ts";
 type Props = {
   contactToDelete: Contact;
   isOpen: boolean;
-  handleCancel: () => void;
+  setIsOpen: (value: boolean) => void;
   handleDelete: () => void;
 };
 
 function DeleteDialog({
   contactToDelete,
   isOpen,
-  handleCancel,
+  setIsOpen,
   handleDelete,
 }: Props) {
-  const handleOpenChange = (open: boolean): void => {
-    if (!open) {
-      handleCancel();
-    }
-  };
-
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>連絡先を削除しますか？</DialogTitle>
@@ -38,12 +33,14 @@ function DeleteDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleCancel()}>
-            キャンセル
-          </Button>
-          <Button variant="destructive" onClick={() => handleDelete()}>
-            削除する
-          </Button>
+          <DialogClose asChild>
+            <Button variant="outline">キャンセル</Button>
+          </DialogClose>
+          <DialogClose asChild>
+            <Button variant="destructive" onClick={handleDelete}>
+              削除する
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
