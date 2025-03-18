@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "type": "command",
+      "name": "Prettier",
+      "program": "npx.cmd",
+      "args": ["prettier", "--write", "."]
+    },
+    {
+      "type": "npm",
+      "name": "npm run dev",
+      "command": "run",
+      "commandArguments": ["dev"]
+    }
+  ]
+}
