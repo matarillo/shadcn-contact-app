@@ -10,23 +10,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Contact } from "@/types";
+import { Contact, ContactStore } from "@/types";
 import { useSelectedContact } from "@/hooks";
 
 type Props = {
-  contacts: Contact[];
+  store: ContactStore;
   newContact: () => Contact;
   handleSave: (editingContact: Contact) => void;
   handleCancel: () => void;
 };
 
-function EditContact({
-  contacts,
-  newContact,
-  handleSave,
-  handleCancel,
-}: Props) {
-  const selectedContact = useSelectedContact(contacts);
+function EditContact({ store, newContact, handleSave, handleCancel }: Props) {
+  const contactId = useSelectedContact();
+  const selectedContact = store.getContact(contactId);
   const [contactToEdit, isNew] =
     selectedContact == null ? [newContact(), true] : [selectedContact, false];
   const [editingContact, setEditingContact] = useState<Contact>(contactToEdit);

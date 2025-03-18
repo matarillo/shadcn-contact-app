@@ -4,7 +4,7 @@ import Sidebar from "@/pages/Sidebar";
 import Top from "@/pages/Top";
 import ShowContact from "@/pages/ShowContact";
 import EditContact from "@/pages/EditContact";
-import { Contact } from "@/types";
+import { Contact, ContactStore } from "@/types";
 
 const initialContacts: Contact[] = [
   {
@@ -38,10 +38,32 @@ const initialContacts: Contact[] = [
 
 function App() {
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
+  const contactStore: ContactStore = {
+    contacts: contacts,
+    getContact(id: number) {
+      return contacts.find((c) => c.id == id);
+    },
+    addContact(contact: Contact) {
+      setContacts([...contacts, contact]);
+    },
+    updateContact(contact: Contact) {
+      setContacts(contacts.map((c) => (c.id === contact.id ? contact : c)));
+    },
+    deleteContact(id: number) {
+      setContacts(contacts.filter((c) => c.id !== id));
+    },
+    toggleFavorite(id: number) {
+      setContacts(
+        contacts.map((c) =>
+          c.id === id ? { ...c, favorite: !c.favorite } : c,
+        ),
+      );
+    },
+  };
   const navigate = useNavigate();
 
   const sidebarProps = {
-    contacts: contacts,
+    store: contactStore,
     handleSelect: (c: Contact): void => {
       navigate(`/contacts/${c.id}`);
     },
@@ -51,7 +73,7 @@ function App() {
   };
 
   const showContactProps = {
-    contacts: contacts,
+    store: contactStore,
     handleToggleFavorite: (selectedContact: Contact) => {
       const updatedContacts = contacts.map((c) =>
         c.id === selectedContact.id ? { ...c, favorite: !c.favorite } : c,
@@ -62,13 +84,13 @@ function App() {
       navigate(`/contacts/${contactToEdit.id}/edit`);
     },
     handleDelete: (contactToDelete: Contact) => {
-      setContacts(contacts.filter((c) => c.id !== contactToDelete.id));
+      contactStore.deleteContact(contactToDelete.id);
       navigate(`/`);
     },
   };
 
   const editContactProps = {
-    contacts: contacts,
+    store: contactStore,
     newContact: () => ({
       id: Date.now(),
       name: "",
@@ -78,14 +100,10 @@ function App() {
       favorite: false,
     }),
     handleSave: (editingContact: Contact) => {
-      if (contacts.find((c) => c.id === editingContact.id)) {
-        setContacts(
-          contacts.map((c) =>
-            c.id === editingContact.id ? editingContact : c,
-          ),
-        );
+      if (contactStore.getContact(editingContact.id)) {
+        contactStore.updateContact(editingContact);
       } else {
-        setContacts([...contacts, editingContact]);
+        contactStore.addContact(editingContact);
       }
       navigate(`/contacts/${editingContact.id}`);
     },

@@ -3,19 +3,20 @@ import { Search, Plus, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Contact } from "@/types";
+import { Contact, ContactStore } from "@/types";
 import { useSelectedContact } from "@/hooks";
 
 type Props = {
-  contacts: Contact[];
+  store: ContactStore;
   handleSelect: (contact: Contact) => void;
   handleAddNew: () => void;
 };
 
-function Sidebar({ contacts, handleSelect, handleAddNew }: Props) {
+function Sidebar({ store, handleSelect, handleAddNew }: Props) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const selectedContact = useSelectedContact(contacts);
-  const filteredContacts = contacts.filter(
+  const contactId = useSelectedContact();
+  const selectedContact = store.getContact(contactId);
+  const filteredContacts = store.contacts.filter(
     (contact) =>
       contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.twitter.toLowerCase().includes(searchTerm.toLowerCase()) ||

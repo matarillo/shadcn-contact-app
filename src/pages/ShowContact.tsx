@@ -12,26 +12,27 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import DeleteDialog from "@/pages/DeleteDialog";
-import { Contact } from "@/types";
+import { Contact, ContactStore } from "@/types";
 import { useSelectedContact } from "@/hooks";
 
 type Props = {
-  contacts: Contact[];
+  store: ContactStore;
   handleToggleFavorite: (selectedContact: Contact) => void;
   handleEdit: (contactToEdit: Contact) => void;
   handleDelete: (contactToDelete: Contact) => void;
 };
 
 function ShowContact({
-  contacts,
+  store,
   handleToggleFavorite,
   handleEdit,
   handleDelete,
 }: Props) {
-  const selectedContact = useSelectedContact(contacts);
+  const contactId = useSelectedContact();
+  const selectedContact = store.getContact(contactId);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  if (selectedContact == null) {
-    return <></>;
+  if (!selectedContact) {
+    return <p>連絡先が見つかりません</p>;
   } else {
     const deleteDialogProps = {
       contactToDelete: selectedContact,
